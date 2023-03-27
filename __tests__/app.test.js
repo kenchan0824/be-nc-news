@@ -24,8 +24,20 @@ describe("GET /api/topics", () => {
           expect(topic).toMatchObject({
             slug: expect.any(String),
             description: expect.any(String),
-          })
+          });
         });
       });
   });
 });
+
+describe("GET /api/topic", () => {
+  it("404: invalid path", () => {
+    return request(app)
+      .get('/api/topic')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Resources not found');
+      });
+  });
+});
+
