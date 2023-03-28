@@ -19,7 +19,8 @@ function fetchArticleById(article_id) {
 function fetchArticles() {
   return db
     .query(`
-      SELECT a.*, count(c.comment_id)::int AS comment_count
+      SELECT a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, 
+             a.article_img_url, count(c.comment_id)::int AS comment_count
       FROM articles a
       LEFT JOIN comments c ON c.article_id = a.article_id
       GROUP BY a.article_id
