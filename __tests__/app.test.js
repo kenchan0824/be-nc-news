@@ -41,3 +41,33 @@ describe("GET /api/topic", () => {
   });
 });
 
+describe("GET /api/articles/:article_id", () => {
+  it("200: response with a single article object of the id", () => {
+    return request(app)
+      .get('/api/articles/7')
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toEqual({
+          article_id: 7,
+          title: 'Z',
+          topic: 'mitch',
+          author: 'icellusedkars',
+          body: 'I was hungry.',
+          created_at: '2020-01-07T14:08:00.000Z',
+          votes: 0,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        });
+      });
+  });
+
+  it("404: response with article not found if id is invalid", () => {
+    return request(app)
+      .get('/api/articles/77')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('article not found');
+      });
+  });
+});
+
