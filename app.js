@@ -3,17 +3,17 @@ const { getTopics } = require('./controllers/topics.controllers');
 
 const app = express();
 
-app.use(express.json());
+// app.use(express.json());
 
 app.get('/api/topics', getTopics);
 
-app.use('*', (req, res, next) => {
-  next({ status: 404, msg: 'Invalid Path' });
+app.use('*', (req, res) => {
+  res.status(404).send({ msg: 'Invalid path' });
 });
 
 app.use((err, req, res, next) => {
   if (err.status) {
-    res.status(404).send({ msg: 'Resources not found'});
+    res.status(404).send({ msg: err.msg });
   } else if (err.code) {
     console.log(err);
     res.status(400).send({ msg: 'Invalid request'});

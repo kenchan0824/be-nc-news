@@ -36,7 +36,7 @@ describe("GET /api/topic", () => {
       .get('/api/topic')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Resources not found');
+        expect(body.msg).toBe('Invalid path');
       });
   });
 });
