@@ -69,5 +69,14 @@ describe("GET /api/articles/:article_id", () => {
         expect(body.msg).toBe('article not found');
       });
   });
+
+  it("400: response with bad parameter if id is not a number", () => {
+    return request(app)
+      .get('/api/articles/notAnId')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('bad input parameter(s)');
+      });
+  });
 });
 
