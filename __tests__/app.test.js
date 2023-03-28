@@ -1,8 +1,8 @@
-const request = require('supertest');
-const seed = require('../db/seeds/seed');
-const db = require('../db/connection');
-const testData = require('../db/data/test-data');
-const app = require('../app');
+const request = require("supertest");
+const seed = require("../db/seeds/seed");
+const db = require("../db/connection");
+const testData = require("../db/data/test-data");
+const app = require("../app");
 
 beforeEach(() => {
   return seed(testData);
@@ -15,12 +15,12 @@ afterAll(() => {
 describe("GET /api/topics", () => {
   it("200: response with all topics", () => {
     return request(app)
-      .get('/api/topics')
+      .get("/api/topics")
       .expect(200)
       .then(({ body }) => {
         const { topics } = body;
         expect(topics).toHaveLength(3);
-        topics.forEach(topic => {
+        topics.forEach((topic) => {
           expect(topic).toMatchObject({
             slug: expect.any(String),
             description: expect.any(String),
@@ -33,10 +33,10 @@ describe("GET /api/topics", () => {
 describe("GET /api/topic", () => {
   it("404: invalid path", () => {
     return request(app)
-      .get('/api/topic')
+      .get("/api/topic")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Invalid path');
+        expect(body.msg).toBe("Invalid path");
       });
   });
 });
@@ -44,39 +44,67 @@ describe("GET /api/topic", () => {
 describe("GET /api/articles/:article_id", () => {
   it("200: response with a single article object of the id", () => {
     return request(app)
-      .get('/api/articles/7')
+      .get("/api/articles/7")
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
         expect(article).toEqual({
           article_id: 7,
-          title: 'Z',
-          topic: 'mitch',
-          author: 'icellusedkars',
-          body: 'I was hungry.',
-          created_at: '2020-01-07T14:08:00.000Z',
+          title: "Z",
+          topic: "mitch",
+          author: "icellusedkars",
+          body: "I was hungry.",
+          created_at: "2020-01-07T14:08:00.000Z",
           votes: 0,
-          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         });
       });
   });
 
   it("404: response with article not found if id is invalid", () => {
     return request(app)
-      .get('/api/articles/77')
+      .get("/api/articles/77")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('article not found');
+        expect(body.msg).toBe("article not found");
       });
   });
 
   it("400: response with bad parameter if id is not a number", () => {
     return request(app)
-      .get('/api/articles/notAnId')
+      .get("/api/articles/notAnId")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('bad input parameter(s)');
+        expect(body.msg).toBe("bad input parameter(s)");
       });
   });
 });
 
+describe("GET /api/articles", () => {
+  it("200: response with all articles with their comments count, sorted by created at", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(12);
+        body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+        expect(body.articles).toBeSorted({
+          descending: true,
+          key: "created_at",
+        });
+      });
+  });
+});
