@@ -1,5 +1,5 @@
 const express = require('express');
-const { getArticleById, getArticles } = require('./controllers/articles.controllers');
+const { getArticleById, getArticles, getArticleComments } = require('./controllers/articles.controllers');
 const { getTopics } = require('./controllers/topics.controllers');
 
 const app = express();
@@ -9,8 +9,8 @@ const app = express();
 app.get('/api/topics', getTopics);
 
 app.get('/api/articles/:article_id', getArticleById);
-
 app.get('/api/articles', getArticles);
+app.get('/api/articles/:article_id/comments', getArticleComments);
 
 app.use('*', (req, res) => {
   res.status(404).send({ msg: 'Invalid path' });
