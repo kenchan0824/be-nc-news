@@ -3,7 +3,10 @@ const {
   fetchArticles,
   checkArticleExists,
 } = require("../models/articles.models");
-const { fetchCommentsByArticle } = require("../models/comments.models");
+const {
+  fetchCommentsByArticle,
+  createComment,
+} = require("../models/comments.models");
 
 function getArticleById(req, res, next) {
   const { article_id } = req.params;
@@ -34,4 +37,20 @@ function getArticleComments(req, res, next) {
     .catch(next);
 }
 
-module.exports = { getArticleById, getArticles, getArticleComments };
+function postArticleComment(req, res, next) {
+  const { article_id } = req.params;
+  const comment = req.body;
+  createComment(article_id, comment)
+    .then((created) => {
+      console.log(created);
+      res.status(201).send({ created });
+    })
+    .catch(next);
+}
+
+module.exports = {
+  getArticleById,
+  getArticles,
+  getArticleComments,
+  postArticleComment,
+};

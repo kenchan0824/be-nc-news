@@ -13,4 +13,15 @@ function fetchCommentsByArticle(article_id) {
     .then((res) => res.rows);
 }
 
-module.exports = { fetchCommentsByArticle };
+function createComment(article_id, comment) {
+  return db.query(
+    `
+      INSERT INTO COMMENTS (article_id, author, body)
+      VALUES ($1, $2, $3)
+      RETURNING *;  
+    `,
+    [article_id, comment.username, comment.body]
+  ).then(res => res.rows[0]);
+}
+
+module.exports = { fetchCommentsByArticle, createComment };

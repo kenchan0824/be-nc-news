@@ -156,3 +156,23 @@ describe("GET /api/articles/:article_id/comments", () => {
       })
   });
 });
+
+describe("POST /api/articles/:article_id", () => {
+  it("201: response with the created comment", () => {
+    const input = { username: "rogersop", body: "hEllo wOrld!" };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(input)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.created).toMatchObject({
+          comment_id: 19,
+          body: 'hEllo wOrld!',
+          article_id: 2,
+          author: 'rogersop',
+          votes: 0,
+          created_at: expect.any(String)        
+        });
+      });
+  });
+});
