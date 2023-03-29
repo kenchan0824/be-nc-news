@@ -40,9 +40,11 @@ function getArticleComments(req, res, next) {
 function postArticleComment(req, res, next) {
   const { article_id } = req.params;
   const comment = req.body;
-  createComment(article_id, comment)
+  checkArticleExists(article_id)
+    .then(() => {
+      return createComment(article_id, comment);
+    })
     .then((created) => {
-      console.log(created);
       res.status(201).send({ created });
     })
     .catch(next);

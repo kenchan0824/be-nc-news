@@ -27,7 +27,12 @@ app.use((err, req, res, next) => {
     res.status(err.status).send({ msg: err.msg });
   } else if (err.code) {
     if (err.code === "22P02") {
-      res.status(400).send({ msg: "bad input parameter(s)" });
+      res.status(400).send({ msg: "bad identity format" });
+    } else if (err.code === '23503') {
+      res.status(400).send({ msg: "foreign key error" });
+    } else{
+      console.log(err);
+      res.status(400).send({ msg: "unknown db error" });
     }
   } else {
     console.log(err);

@@ -76,7 +76,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/notAnId")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("bad input parameter(s)");
+        expect(body.msg).toBe("bad identity format");
       });
   });
 });
@@ -143,7 +143,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get('/api/articles/notAnId/comments')
       .expect(400)
       .then(({ body }) => {
-          expect(body.msg).toBe('bad input parameter(s)');
+          expect(body.msg).toBe('bad identity format');
       })
   });
 
@@ -174,5 +174,38 @@ describe("POST /api/articles/:article_id", () => {
           created_at: expect.any(String)        
         });
       });
+  });
+
+  it("400: bad article id", () => {
+    const input = { username: "rogersop", body: "hEllo wOrld!" };
+    return request(app)
+    .post("/api/articles/notAnId/comments")
+    .send(input)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('bad identity format');
+    });
+  });
+
+  it("404: article not found", () => {
+    const input = { username: "rogersop", body: "hEllo wOrld!" };
+    return request(app)
+      .post('/api/articles/999/comments')
+      .send(input)
+      .expect(404)
+      .then(({ body }) => {
+          expect(body.msg).toBe('article not found');
+      })
+  });
+
+  it("400: bad username or user does not exist", () => {
+    const input = { username: "rogerfederer", body: "hEllo wOrld!" };
+    return request(app)
+      .post('/api/articles/2/comments')
+      .send(input)
+      .expect(400)
+      .then(({ body }) => {
+          expect(body.msg).toBe('foreign key error');
+      })
   });
 });
