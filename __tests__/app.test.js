@@ -109,14 +109,13 @@ describe("GET /api/articles", () => {
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
-  it("200: response with list of comments of the article", () => {
+  it("200: response with list of comments of the article, sorted by created at", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
-        console.log(body.comments);
         expect(body.comments).toHaveLength(11);
-        body.comments.forEach(comment => {
+        body.comments.forEach((comment) => {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
             body: expect.any(String),
@@ -126,6 +125,25 @@ describe("GET /api/articles/:article_id/comments", () => {
             created_at: expect.any(String),
           });
         });
+        expect(body.comments).toBeSorted({ descending: true, key: "created_at" });
       });
+  });
+
+  it('400: bad article id', () => {
+    return request(app)
+      .get('/api/articles/notAnId/comments')
+      .expect(400)
+      .then(({ body }) => {
+          expect(body.msg).toBe('bad input parameter(s)');
+      })
+  });
+
+  it('404: article not found', () => {
+    return request(app)
+      .get('/api/articles/999/comments')
+      .expect(404)
+      .then(({ body }) => {
+          expect(body.msg).toBe('article not found');
+      })
   });
 });
