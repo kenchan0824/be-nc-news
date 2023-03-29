@@ -109,6 +109,15 @@ describe("GET /api/articles", () => {
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
+  it("200: response with empty array if article exists but has no comment", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
+
   it("200: response with list of comments of the article, sorted by created at", () => {
     return request(app)
       .get("/api/articles/1/comments")
