@@ -36,7 +36,7 @@ describe("GET /api/topic", () => {
       .get("/api/topic")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid path");
+        expect(body.msg).toBe("invalid path");
       });
   });
 });
@@ -76,7 +76,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/notAnId")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("bad identity format");
+        expect(body.msg).toBe("bad data format");
       });
   });
 });
@@ -143,7 +143,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get('/api/articles/notAnId/comments')
       .expect(400)
       .then(({ body }) => {
-          expect(body.msg).toBe('bad identity format');
+          expect(body.msg).toBe('bad data format');
       })
   });
 
@@ -165,7 +165,7 @@ describe("POST /api/articles/:article_id", () => {
       .send(input)
       .expect(201)
       .then(({ body }) => {
-        expect(body.created).toMatchObject({
+        expect(body.comment).toMatchObject({
           comment_id: 19,
           body: 'hEllo wOrld!',
           article_id: 2,
@@ -183,7 +183,7 @@ describe("POST /api/articles/:article_id", () => {
     .send(input)
     .expect(400)
     .then(({ body }) => {
-      expect(body.msg).toBe('bad identity format');
+      expect(body.msg).toBe('bad data format');
     });
   });
 
@@ -205,7 +205,18 @@ describe("POST /api/articles/:article_id", () => {
       .send(input)
       .expect(400)
       .then(({ body }) => {
-          expect(body.msg).toBe('foreign key error');
+          expect(body.msg).toBe('invalid information provided');
+      })
+  });
+
+  it("400: missing comment body", () => {
+    const input = { username: "rogersop" };
+    return request(app)
+      .post('/api/articles/2/comments')
+      .send(input)
+      .expect(400)
+      .then(({ body }) => {
+          expect(body.msg).toBe('missing required information');
       })
   });
 });

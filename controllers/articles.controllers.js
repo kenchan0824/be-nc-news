@@ -44,8 +44,8 @@ function postArticleComment(req, res, next) {
     .then(() => {
       return createComment(article_id, comment);
     })
-    .then((created) => {
-      res.status(201).send({ created });
+    .then((comment) => {
+      res.status(201).send({ comment });
     })
     .catch(next);
 }
