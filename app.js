@@ -7,6 +7,7 @@ const {
   postArticleComment,
   patchArticle,
 } = require("./controllers/articles.controllers");
+const { deleteComment } = require("./controllers/comments.controllers");
 const {
   customErrorHandler,
   psqlErrorHandler,
@@ -29,6 +30,8 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getArticleComments);
 app.post("/api/articles/:article_id/comments", postArticleComment);
 app.patch("/api/articles/:article_id", patchArticle);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.use("*", (req, res) => {
   res.status(404).send({ msg: "invalid path" });
