@@ -36,7 +36,7 @@ describe("GET /api/topic", () => {
       .get("/api/topic")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid path");
+        expect(body.msg).toBe("invalid path");
       });
   });
 });
@@ -76,7 +76,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/notAnId")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("bad input parameter(s)");
+        expect(body.msg).toBe("bad data format");
       });
   });
 });
@@ -134,25 +134,92 @@ describe("GET /api/articles/:article_id/comments", () => {
             created_at: expect.any(String),
           });
         });
-        expect(body.comments).toBeSorted({ descending: true, key: "created_at" });
+        expect(body.comments).toBeSorted({
+          descending: true,
+          key: "created_at",
+        });
       });
   });
 
-  it('400: bad article id', () => {
+  it("400: bad article id", () => {
     return request(app)
-      .get('/api/articles/notAnId/comments')
+      .get("/api/articles/notAnId/comments")
       .expect(400)
       .then(({ body }) => {
-          expect(body.msg).toBe('bad input parameter(s)');
+          expect(body.msg).toBe('bad data format');
       })
   });
 
-  it('404: article not found', () => {
+  it("404: article not found", () => {
     return request(app)
-      .get('/api/articles/999/comments')
+      .get("/api/articles/999/comments")
       .expect(404)
       .then(({ body }) => {
+        expect(body.msg).toBe("article not found");
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id", () => {
+  it("201: response with the created comment", () => {
+    const input = { username: "rogersop", body: "hEllo wOrld!" };
+    return request(app)
+    .post("/api/articles/2/comments")
+    .send(input)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: 19,
+          body: 'hEllo wOrld!',
+          article_id: 2,
+          author: 'rogersop',
+          votes: 0,
+          created_at: expect.any(String)        
+        });
+      });
+  });
+
+  it("400: bad article id", () => {
+    const input = { username: "rogersop", body: "hEllo wOrld!" };
+    return request(app)
+    .post("/api/articles/notAnId/comments")
+    .send(input)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('bad data format');
+    });
+  });
+  
+  it("404: article not found", () => {
+    const input = { username: "rogersop", body: "hEllo wOrld!" };
+    return request(app)
+    .post('/api/articles/999/comments')
+    .send(input)
+    .expect(404)
+    .then(({ body }) => {
           expect(body.msg).toBe('article not found');
+        })
+      });
+
+      it("400: bad username or user does not exist", () => {
+        const input = { username: "rogerfederer", body: "hEllo wOrld!" };
+        return request(app)
+        .post('/api/articles/2/comments')
+        .send(input)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('invalid information provided');
+        })
+      });
+      
+      it("400: missing comment body", () => {
+        const input = { username: "rogersop" };
+    return request(app)
+    .post('/api/articles/2/comments')
+    .send(input)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('missing required information');
       })
   });
 });
@@ -161,8 +228,8 @@ describe('PATCH /api/articles/:article_id', () => {
   it('202: response with the updated article', () => {
     const vote = { inc_votes: 1 };
     return request(app)
-      .patch('/api/articles/1')
-      .send(vote)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 1 })
       .expect(202)
       .then(({ body }) => {
         expect(body.article).toEqual({
@@ -177,5 +244,45 @@ describe('PATCH /api/articles/:article_id', () => {
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         });
       });
-  })
+  });
+
+  it("400: bad article id", () => {
+    return request(app)
+      .patch("/api/articles/notAnId")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad data format");
+      });
+  });
+
+  it("404: article not found", () => {
+    return request(app)
+      .patch("/api/articles/999")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article not found");
+      });
+  });
+
+  it("400: missing vote", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send()
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("missing required information");
+      });
+  });
+
+  it("400: bad vote", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 'notNum' })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad data format");
+      });
+  });
 });

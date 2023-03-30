@@ -1,14 +1,19 @@
 const express = require("express");
+const { getTopics } = require("./controllers/topics.controllers");
 const {
   getArticleById,
   getArticles,
   getArticleComments,
+  postArticleComment,
   patchArticle,
 } = require("./controllers/articles.controllers");
-const { getTopics } = require("./controllers/topics.controllers");
+const {
+  customErrorHandler,
+  psqlErrorHandler,
+  unknownErrorHandler,
+} = require("./controllers/errors.controllers");
 
 const app = express();
-
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
@@ -16,23 +21,14 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getArticleComments);
+app.post("/api/articles/:article_id/comments", postArticleComment);
 app.patch("/api/articles/:article_id", patchArticle);
 
 app.use("*", (req, res) => {
-  res.status(404).send({ msg: "Invalid path" });
+  res.status(404).send({ msg: "invalid path" });
 });
-
-app.use((err, req, res, next) => {
-  if (err.status) {
-    res.status(err.status).send({ msg: err.msg });
-  } else if (err.code) {
-    if (err.code === "22P02") {
-      res.status(400).send({ msg: "bad input parameter(s)" });
-    }
-  } else {
-    console.log(err);
-    res.status(500).send({ msg: "Please contact the administrator." });
-  }
-});
+app.use(customErrorHandler);
+app.use(psqlErrorHandler);
+app.use(unknownErrorHandler);
 
 module.exports = app;
