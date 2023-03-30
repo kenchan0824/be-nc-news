@@ -2,6 +2,7 @@ const {
   fetchArticleById,
   fetchArticles,
   checkArticleExists,
+  updateArticleVotes,
 } = require("../models/articles.models");
 const {
   fetchCommentsByArticle,
@@ -50,9 +51,26 @@ function postArticleComment(req, res, next) {
     .catch(next);
 }
 
+function patchArticle(req, res, next) {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+  if (!inc_votes) {
+    return next({ status: 400, msg: "missing required information" });
+  }
+  checkArticleExists(article_id)
+    .then(() => {
+      return updateArticleVotes(article_id, inc_votes);
+    })
+    .then((article) => {
+      res.status(202).send({ article });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getArticleById,
   getArticles,
   getArticleComments,
   postArticleComment,
+  patchArticle,
 };
