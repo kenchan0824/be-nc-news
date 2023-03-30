@@ -36,7 +36,7 @@ describe("GET /api/topic", () => {
       .get("/api/topic")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid path");
+        expect(body.msg).toBe("invalid path");
       });
   });
 });
@@ -76,7 +76,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/notAnId")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("bad input parameter(s)");
+        expect(body.msg).toBe("bad data format");
       });
   });
 });
@@ -143,7 +143,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get('/api/articles/notAnId/comments')
       .expect(400)
       .then(({ body }) => {
-          expect(body.msg).toBe('bad input parameter(s)');
+          expect(body.msg).toBe('bad data format');
       })
   });
 
@@ -153,6 +153,70 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(404)
       .then(({ body }) => {
           expect(body.msg).toBe('article not found');
+      })
+  });
+});
+
+describe("POST /api/articles/:article_id", () => {
+  it("201: response with the created comment", () => {
+    const input = { username: "rogersop", body: "hEllo wOrld!" };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(input)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: 19,
+          body: 'hEllo wOrld!',
+          article_id: 2,
+          author: 'rogersop',
+          votes: 0,
+          created_at: expect.any(String)        
+        });
+      });
+  });
+
+  it("400: bad article id", () => {
+    const input = { username: "rogersop", body: "hEllo wOrld!" };
+    return request(app)
+    .post("/api/articles/notAnId/comments")
+    .send(input)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('bad data format');
+    });
+  });
+
+  it("404: article not found", () => {
+    const input = { username: "rogersop", body: "hEllo wOrld!" };
+    return request(app)
+      .post('/api/articles/999/comments')
+      .send(input)
+      .expect(404)
+      .then(({ body }) => {
+          expect(body.msg).toBe('article not found');
+      })
+  });
+
+  it("400: bad username or user does not exist", () => {
+    const input = { username: "rogerfederer", body: "hEllo wOrld!" };
+    return request(app)
+      .post('/api/articles/2/comments')
+      .send(input)
+      .expect(400)
+      .then(({ body }) => {
+          expect(body.msg).toBe('invalid information provided');
+      })
+  });
+
+  it("400: missing comment body", () => {
+    const input = { username: "rogersop" };
+    return request(app)
+      .post('/api/articles/2/comments')
+      .send(input)
+      .expect(400)
+      .then(({ body }) => {
+          expect(body.msg).toBe('missing required information');
       })
   });
 });
