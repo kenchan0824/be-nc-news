@@ -15,7 +15,9 @@ const {
 
 const app = express();
 app.use((req, res, next) => {
-  console.log(`${new Date().toString()} ${req.method} ${req.originalUrl}`);
+  if (process.env.NODE_ENV !== 'test') {
+    console.log(`${new Date().toString()} ${req.method} ${req.originalUrl}`);
+  }
   next();
 });
 app.use(express.json());
