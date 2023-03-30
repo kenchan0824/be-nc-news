@@ -11,18 +11,25 @@ function fetchArticleById(article_id) {
     });
 }
 
-function fetchArticles() {
-  return db
-    .query(
-      `
-      SELECT a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, 
-             a.article_img_url, count(c.comment_id)::int AS comment_count
-      FROM articles a
-      LEFT JOIN comments c ON c.article_id = a.article_id
-      GROUP BY a.article_id
-      ORDER BY a.created_at DESC ;
-    `
-    )
+function fetchArticles(topic, sort_by = 'created_at', order = 'desc') {
+  let sql = `
+    SELECT a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, 
+    a.article_img_url, count(c.comment_id)::int AS comment_count 
+    FROM articles a 
+    LEFT JOIN comments c ON c.article_id = a.article_id `;
+  const values = [];
+
+  if (topic) {
+    sql += `WHERE topic = $1 `;
+    values.push(topic);
+  }
+
+  sql += `
+    GROUP BY a.article_id
+    ORDER BY a.${sort_by} ${order} ;
+  `;
+
+  return db.query(sql, values)
     .then((res) => res.rows);
 }
 

@@ -81,7 +81,7 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
-describe("GET /api/articles", () => {
+describe.only("GET /api/articles", () => {
   it("200: response with all articles with their comments count, sorted by created at", () => {
     return request(app)
       .get("/api/articles")
@@ -106,6 +106,28 @@ describe("GET /api/articles", () => {
         });
       });
   });
+
+  it('200: response with filtered articles and sort by title in ascending order', () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=title&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(11);
+        expect(body.articles).toBeSorted({
+          key: "title",
+          descending: false,
+        });
+      });
+  })
+
+  it('200: response with an empty array if no article is found for the topic', () => {
+    return request(app)
+      .get("/api/articles?topic=paper&sort_by=title&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  })
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
