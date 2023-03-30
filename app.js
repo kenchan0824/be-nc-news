@@ -7,7 +7,7 @@ const {
 } = require("./controllers/articles.controllers");
 const {
   customErrorHandler,
-  dataErrorHandler,
+  psqlErrorHandler,
   unknownErrorHandler,
 } = require("./controllers/errors.controllers");
 const { getTopics } = require("./controllers/topics.controllers");
@@ -26,7 +26,7 @@ app.use("*", (req, res) => {
   res.status(404).send({ msg: "invalid path" });
 });
 app.use(customErrorHandler);
-app.use(dataErrorHandler);
+app.use(psqlErrorHandler);
 app.use(unknownErrorHandler);
 
 module.exports = app;

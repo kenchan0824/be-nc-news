@@ -5,7 +5,7 @@ function customErrorHandler(err, req, res, next) {
   next(err);
 }
 
-function dataErrorHandler(err, req, res, next) {
+function psqlErrorHandler(err, req, res, next) {
   if (err.code) {
     if (err.code === "22P02") {
       return res.status(400).send({ msg: "bad data format" });
@@ -25,4 +25,4 @@ function unknownErrorHandler(err, req, res, next) {
   res.status(500).send({ msg: "please contact the administrator" });
 }
 
-module.exports = { customErrorHandler, dataErrorHandler, unknownErrorHandler,}
+module.exports = { customErrorHandler, psqlErrorHandler, unknownErrorHandler,}
