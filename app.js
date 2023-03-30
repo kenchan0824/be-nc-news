@@ -13,6 +13,7 @@ const {
   psqlErrorHandler,
   unknownErrorHandler,
 } = require("./controllers/errors.controllers");
+const { getUsers } = require("./controllers/users.controllers");
 
 const app = express();
 app.use((req, res, next) => {
@@ -32,6 +33,8 @@ app.post("/api/articles/:article_id/comments", postArticleComment);
 app.patch("/api/articles/:article_id", patchArticle);
 
 app.delete("/api/comments/:comment_id", deleteComment);
+
+app.get("/api/users", getUsers);
 
 app.use("*", (req, res) => {
   res.status(404).send({ msg: "invalid path" });
