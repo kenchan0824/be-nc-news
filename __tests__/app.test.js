@@ -106,6 +106,57 @@ describe("GET /api/articles", () => {
         });
       });
   });
+
+  it('200: response with filtered articles and sort by title in ascending order', () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=title&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(11);
+        expect(body.articles).toBeSorted({
+          key: "title",
+          descending: false,
+        });
+      });
+  });
+
+  it('200: response with an empty array if no article is found for the topic', () => {
+    return request(app)
+      .get("/api/articles?topic=paper&sort_by=title&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  });
+
+  it('400: invalid topic', () => {
+    return request(app)
+      .get("/api/articles?topic=dogs&sort_by=title&order=asc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('invalid topic');
+      });
+  });
+
+  it('400: wrong sort_by', () => {
+    return request(app)
+      .get("/api/articles?topic=cats&sort_by=likes&order=asc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('invalid sort by');
+      });
+  });
+
+  it('400: wrong order', () => {
+    return request(app)
+      .get("/api/articles?topic=cats&sort_by=title&order=random")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('invalid sorting order');
+      });
+  });
+
+
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
