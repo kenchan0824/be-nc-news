@@ -21,7 +21,7 @@ The articles can also be queried by topics, and sorted by popularity or created 
 
 ## Setup Instructions
 
-1. Run `git clone https://github.com/kenchan0824/be-nc-news.git` in your local mahcine to download the repository.
+1. Run `git clone https://github.com/kenchan0824/be-nc-news.git` in your local machine to download the repository.
 2. Run `npm install` to install all the required packages.
 3. Run `npm run setup-dbs` to create the testing and development databases on you local PostgreSQL sever.
 4. Refer to `.env-example` to create two configuration files, `.env.test` and `.env.developement`, which point to your testing and developement databases.
