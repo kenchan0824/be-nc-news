@@ -4,13 +4,11 @@ function fetchArticleById(article_id) {
   return db
     .query(
       `
-        SELECT a.* ,
-        ( SELECT count(*)::INT 
-          FROM comments c 
-          WHERE c.article_id = a.article_id 
-        ) AS comment_count
+        SELECT a.*, count(c.comment_id)::INT AS comment_count
         FROM articles a
-        WHERE a.article_id = $1;
+        LEFT OUTER JOIN comments c ON c.article_id = a.article_id 
+        WHERE a.article_id = $1
+        GROUP BY a.article_id;
       `, 
       [article_id]
     )
