@@ -81,7 +81,7 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
-describe.only("GET /api/articles", () => {
+describe("GET /api/articles", () => {
   it("200: response with all articles with their comments count, sorted by created at", () => {
     return request(app)
       .get("/api/articles")
@@ -118,7 +118,7 @@ describe.only("GET /api/articles", () => {
           descending: false,
         });
       });
-  })
+  });
 
   it('200: response with an empty array if no article is found for the topic', () => {
     return request(app)
@@ -127,7 +127,36 @@ describe.only("GET /api/articles", () => {
       .then(({ body }) => {
         expect(body.articles).toEqual([]);
       });
-  })
+  });
+
+  it('400: invalid topic', () => {
+    return request(app)
+      .get("/api/articles?topic=dogs&sort_by=title&order=asc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('invalid topic');
+      });
+  });
+
+  it('400: wrong sort_by', () => {
+    return request(app)
+      .get("/api/articles?topic=cats&sort_by=likes&order=asc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('invalid sort by');
+      });
+  });
+
+  it('400: wrong order', () => {
+    return request(app)
+      .get("/api/articles?topic=cats&sort_by=title&order=random")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('invalid sorting order');
+      });
+  });
+
+
 });
 
 describe("GET /api/articles/:article_id/comments", () => {

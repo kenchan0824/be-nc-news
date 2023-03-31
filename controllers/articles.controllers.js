@@ -8,6 +8,7 @@ const {
   fetchCommentsByArticle,
   createComment,
 } = require("../models/comments.models");
+const { checkTopicExists } = require("../models/topics.models");
 
 function getArticleById(req, res, next) {
   const { article_id } = req.params;
@@ -20,11 +21,19 @@ function getArticleById(req, res, next) {
 
 function getArticles(req, res, next) {
   const { topic, sort_by, order } = req.query;
-  fetchArticles(topic, sort_by, order)
-    .then((articles) => {
+  
+  const promises = [fetchArticles(topic, sort_by, order)];
+  if (topic) promises.push(checkTopicExists(topic));
+
+  Promise.all(promises)
+    .then(([articles]) => {
       res.status(200).send({ articles });
     })
-    .catch(next);
+    .catch(err => {
+      if (err.status === 404)
+        err = { status: 400, msg: 'invalid topic' };
+      next(err);
+    });
 }
 
 function getArticleComments(req, res, next) {

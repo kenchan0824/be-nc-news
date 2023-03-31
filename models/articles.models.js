@@ -12,6 +12,14 @@ function fetchArticleById(article_id) {
 }
 
 function fetchArticles(topic, sort_by = 'created_at', order = 'desc') {
+  const fields = ['author', 'title', 'article_id', 'created_at', 'votes', 'article_img_url', 'comment_count']
+  if (!fields.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: 'invalid sort by'});
+  }
+  if (order != 'asc' && order != 'desc') {
+    return Promise.reject({ status: 400, msg: 'invalid sorting order'});
+  }
+
   let sql = `
     SELECT a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, 
     a.article_img_url, count(c.comment_id)::int AS comment_count 
