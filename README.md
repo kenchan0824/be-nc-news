@@ -2,7 +2,7 @@
 
 ## Demo URL
 
-https://be-nc-news-cu7z.onrender.com
+https://be-nc-news-cu7z.onrender.com/api
 
 ## Summary
 
@@ -15,19 +15,15 @@ The articles can also be queried by topics, and sorted by popularity or created 
 ## Prerequisites
 
 - An unix like operating system, prefers Ubutu, MacOS or Windows 10 with WSL.
-- Node JS runtime environment, recommends v19.6.0 or above
-- PostgreSQL database, recommends 12.13 or above
-- Git command, recommends 2.34.1 or above
+- Node JS runtime environment, recommends v19.6.0 or above.
+- PostgreSQL database, recommends 12.13 or above.
+- Git command, recommends 2.34.1 or above.
 
 ## Setup Instructions
 
 1. In your local machine, run `git clone https://github.com/kenchan0824/be-nc-news.git` to download the repository.
 2. Run `npm install` to install all the required packages.
-3. Run `npm run setup-dbs` to create the testing and development databases.
+3. Run `npm run setup-dbs` to create the testing and development databases on you local PostgreSQL sever.
 4. Refer to `.env-example` to create two configuration files, `.env.test` and `.env.developement`, which point to your testing and developement databases.
-5. Run `npm run seed` to seed your development databases.
-6. Run `npm test` to verify your setups.
-
-
-
-
+5. Run `npm run seed` to dump initial data to your development databases.
+6. Finally, run `npm test` to verify your setups.
