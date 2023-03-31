@@ -60,13 +60,17 @@
   },
   "POST /api/articles/:article_id/comments": {
     "description": "serves to create a comment for the article of the id",
-    "exampleBody": [],
-    "exampleResponse": {
-      "articles": {
-        "username": "rogersop",
-        "name": "paul",
-        "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
-      }
-    }
-  } 
+    "exampleContent": { "username": "rogersop", "body": "hEllo wOrld!" },
+    "response": "the object of the created article"
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "serves to update the vote of an article",
+    "exampleContent": { "inc_votes": 1 },
+    "response": "the object of the updated article"
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "serves to delete a comment",
+    "response": "status code 204"
+  }
+
 }
