@@ -10,18 +10,63 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles",
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+          "article_id": 7,
+          "title": "Z",
+          "topic": "mitch",
+          "author": "icellusedkars",
+          "body": "I was hungry.",
+          "created_at": "2020-01-07T14:08:00.000Z",
+          "votes": 0,
+          "article_img_url":
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            "comment_count": 0
         }
       ]
     }
-  }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an articles of the id",
+    "queries": [],
+    "exampleResponse": {
+      "articles": {
+        "article_id": 7,
+        "title": "Z",
+        "topic": "mitch",
+        "author": "icellusedkars",
+        "body": "I was hungry.",
+        "created_at": "2020-01-07T14:08:00.000Z",
+        "votes": 0,
+        "article_img_url":
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          "comment_count": 0
+    }
+    }
+  },
+  "GET /api/users": {
+    "description": "serves an array users",
+    "queries": [],
+    "exampleResponse": {
+      "articles": {
+        "username": "rogersop",
+        "name": "paul",
+        "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+      }
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "serves to create a comment for the article of the id",
+    "exampleBody": [],
+    "exampleResponse": {
+      "articles": {
+        "username": "rogersop",
+        "name": "paul",
+        "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+      }
+    }
+  } 
 }
