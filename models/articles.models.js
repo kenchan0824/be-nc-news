@@ -64,8 +64,8 @@ function updateArticleVotes(article_id, inc_votes) {
     .query(
       `
         UPDATE articles 
-        SET votes = votes + $1 
-        WHERE article_id = $2
+        SET votes = votes + $2 
+        WHERE article_id = $1
         RETURNING *;
       `,
       [article_id, inc_votes]
