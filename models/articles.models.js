@@ -43,7 +43,7 @@ function fetchArticles(topic, sort_by = 'created_at', order = 'desc') {
 
   sql += `
     GROUP BY a.article_id
-    ORDER BY a.${sort_by} ${order} ;
+    ORDER BY ${sort_by} ${order} ;
   `;
 
   return db.query(sql, values)
